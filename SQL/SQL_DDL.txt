@@ -1,0 +1,167 @@
+﻿Assignment 4
+Aim: To implement Data definition languages queries.
+Theory:
+DDL or Data Definition Language actually consists of the SQL commands that can be used to define the database schema. It simply deals with descriptions of the database schema and is used to create and modify the structure of database objects in the database. DDL is a set of SQL commands used to create, modify, and delete database structures but not data. These commands are normally not used by a general user, who should be accessing the database via an application.
+
+List of DDL commands: 
+
+CREATE: This command is used to create the database or its objects (like table, index, function, views, store procedure, and triggers).
+DROP: This command is used to delete objects from the database.
+ALTER: This is used to alter the structure of the database.
+TRUNCATE: This is used to remove all records from a table, including all spaces allocated for the records are removed.
+
+Queries:
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| databasedb         |
+| db                 |
+| dbc                |
+| information_schema |
+| jeevika            |
+| krushang           |
+| mysql              |
+| performance_schema |
+| rishabh_117        |
+| rohan2902          |
+| sakila             |
+| sales              |
+| shreya             |
+| simran127          |
+| soham10            |
+| sys                |
+| vedant1            |
+| world              |
++--------------------+
+18 rows in set (0.00 sec)
+
+mysql> create database shrutik;
+Query OK, 1 row affected (0.04 sec)
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| databasedb         |
+| db                 |
+| dbc                |
+| information_schema |
+| jeevika            |
+| krushang           |
+| mysql              |
+| performance_schema |
+| rishabh_117        |
+| rohan2902          |
+| sakila             |
+| sales              |
+| shreya             |
+| shrutik            |
+| simran127          |
+| soham10            |
+| sys                |
+| vedant1            |
+| world              |
++--------------------+
+19 rows in set (0.00 sec)
+
+mysql> use shrutik;
+Database changed
+
+mysql> show tables;
+Empty set (0.10 sec)
+
+mysql> Create table Client_master
+    -> (
+    -> Client_no varchar(6),
+    -> Name varchar(20) NOT NULL,
+    -> Address1 varchar (30),
+    -> Address2 varchar(30),
+    -> City varchar(15),
+    -> State varchar(15),
+    -> Pincode int(6),
+    -> Bal_due float(10,2),
+    -> primary key(Client_no),
+    -> CHECK (Client_no like 'C%')
+    -> );
+Query OK, 0 rows affected, 2 warnings (0.04 sec)
+
+mysql> create table product_master
+    -> (
+    -> Product_no varchar(6),
+    -> Description varchar(25) NOT NULL,
+    -> Profit_percent float(5,2) NOT NULL,
+    -> Unit_measure varchar(10) NOT NULL,
+    -> Qty_on_hand int(8),
+    -> Reorder_lvl int(8) NOT NULL,
+    -> Sell_price float(8,2) NOT NULL CHECK(Sell_price<>0),
+    -> Cost_price float(8,2) NOT NULL CHECK(Cost_price<>0),
+    -> primary key(Product_no),
+    -> CHECK (Product_no like 'P%')
+    -> );
+Query OK, 0 rows affected, 5 warnings (0.02 sec)
+
+mysql> create table salesman_master
+    -> (
+    -> Salesman_no varchar(6),
+    -> Salesman_name varchar(20)NOT NULL,
+    -> Address1 varchar(30)NOT NULL,
+    -> Address2 varchar(30),
+    -> City varchar(20),
+    -> Pincode varchar(6),
+    -> State varchar(20),
+    -> Sal_amt float(8,2)NOT NULL CHECK(Sal_amt<>0),
+    -> Tgt_to_get float(6,2)NOT NULL CHECK(Tgt_to_get<>0),
+    -> Ytd_sales float(6,2)NOT NULL,Remarks varchar(60),
+    -> primary key(Salesman_no),CHECK (Salesman_no like 'S%'));
+Query OK, 0 rows affected, 3 warnings (0.01 sec)
+
+create table sales_order
+(
+S_order_no varchar(6),
+S_order_date date, 
+Client_no varchar(6),
+Dely_addr varchar(25),
+Salesman_no varchar(6),
+Dely_type char(1), CHECK(Dely_type in ('P','F','D')) ,
+Billed_yn char(1),
+Dely_date date, CHECK (Dely_date>=S_order_date),
+Order_status varchar(10), CHECK(order_status in('IP','F','B','C')),
+primary key(S_order_no),
+foreign key(Client_no)references Client_master(Client_no),
+foreign key(Salesman_no )references salesman_master (Salesman_no )
+);
+mysql> create table sales_order_details
+    -> (
+    -> S_order_no varchar(6),
+    -> Product_no varchar(6),
+    -> Qty_ordered int(8),
+    -> Qty_disp int(8),
+    -> Product_rate float(10,2),
+    -> primary key(S_order_no,Product_no),
+    -> foreign key(S_order_no)references sales_order (S_order_no),
+    -> foreign key(Product_no)references product_master(Product_no)
+    -> );
+Query OK, 0 rows affected, 3 warnings (0.02 sec)
+
+mysql> create table Challan_Header
+    -> (
+    -> Challan_no varchar(6),
+    -> S_order_no varchar(6),
+    -> Challan_date date NOT NULL,
+    -> Billed_yn char(1) DEFAULT ('N'), check(Billed_yn in ('Y','N')),
+    -> foreign key (S_order_no) references sales_order(S_order_no),
+    -> primary key(Challan_no)
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> create table Challan_details
+    -> (
+    -> Challan_no varchar(6) ,
+    -> Product_no varchar(6) ,
+    -> Qty_disp int(8),
+    -> primary key(Qty_disp) ,
+    -> foreign key(Challan_no) references Challan_Header(Challan_no),
+    -> foreign key(Product_no) references product_master(Product_no)
+    -> );
+Query OK, 0 rows affected, 1 warning (0.03 sec)

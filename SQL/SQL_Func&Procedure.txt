@@ -1,0 +1,107 @@
+﻿Assignment 10
+Aim: To implement functions and procedures in mySQL.
+Theory:
+A stored function in MySQL is a set of SQL statements that perform some task/operation and return a single value. It is one of the types of stored programs in MySQL. When you will create a stored function, make sure that you have a CREATE ROUTINE database privilege. Generally, we used this function to encapsulate the common business rules or formulas reusable in stored programs or SQL statements.
+A procedure (often called a stored procedure) is a collection of pre-compiled SQL statements stored inside the database. It is a subroutine or a subprogram in the regular computing language. A procedure always contains a name, parameter lists, and SQL statements. We can invoke the procedures by using triggers, other procedures and applications such as Java, Python, PHP, etc.
+
+Queries:
+select * from clientmaster;
++----------+-----------------+------+------+--------+-------------+---------+----------+
+| clientNo | name            | add1 | add2 | city   | state       | pincode | balDue   |
++----------+-----------------+------+------+--------+-------------+---------+----------+
+| C00001   | Ivan Bayross    | NULL | NULL | Bombay | Maharashtra |  400054 | 15000.00 |
+| C00002   | Vandana Saitwal | NULL | NULL | Madras | Tamil Nadu  |  780001 |     0.00 |
+| C00003   | Pramada Jaguste | NULL | NULL | Bombay | Maharashtra |  400057 |  5000.00 |
+| C00004   | Basu Navindgi   | NULL | NULL | Bombay | Maharashtra |  400056 |     0.00 |
+| C00005   | Ravi Sreedharan | NULL | NULL | Delhi  |             |  100001 |  2000.00 |
+| C00006   | Rukmini         | NULL | NULL | Bombay | Maharashtra |  400050 | 15000.00 |
++----------+-----------------+------+------+--------+-------------+---------+----------+
+6 rows in set (0.05 sec)
+
+mysql> delimiter &&
+mysql> create procedure my_pro(IN clientNo int)
+    -> begin
+    -> select * from clientmaster LIMIT clientNo;
+    -> end;
+    -> &&
+Query OK, 0 rows affected (0.36 sec)
+
+mysql> call my_pro(2);
+    -> &&
++----------+-----------------+------+------+--------+-------------+---------+----------+
+| clientNo | name            | add1 | add2 | city   | state       | pincode | balDue   |
++----------+-----------------+------+------+--------+-------------+---------+----------+
+| C00001   | Ivan Bayross    | NULL | NULL | Bombay | Maharashtra |  400054 | 15000.00 |
+| C00002   | Vandana Saitwal | NULL | NULL | Madras | Tamil Nadu  |  780001 |     0.00 |
++----------+-----------------+------+------+--------+-------------+---------+----------+
+2 rows in set (0.02 sec)
+
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> delimiter &&
+mysql> create procedure my_pro1(OUT clientNo int)
+    -> select COUNT(*) INTO clientNo FROM clientmaster;
+    -> end;
+    -> &&
+Query OK, 0 rows affected (0.16 sec)
+
+mysql> call my_pro1(@a);
+    -> select @a;
+    -> &&
+Query OK, 1 row affected (0.29 sec)
+
++------+
+| @a   |
++------+
+|    6 |
++------+
+1 row in set (0.29 sec)
+
+mysql> select * from productmaster;
+    -> &&
++-----------+---------------+---------------+-------------+-----------+-------------+-----------+-----------+
+| productNo | description   | profitPercent | unitMeasure | qtyOnHand | recorderLvl | sellPrice | costPrice |
++-----------+---------------+---------------+-------------+-----------+-------------+-----------+-----------+
+| P00001    | 1.44 Floppies |          5.00 | Piece       |       100 |          20 |    525.00 |    500.00 |
+| P03453    | Monitors      |          6.00 | Piece       |        10 |           3 |  12000.00 |  11280.00 |
+| P06734    | Mouse         |          5.00 | Piece       |        20 |           5 |   1050.00 |   1000.00 |
+| P07865    | 1.22 Floppies |          5.00 | Piece       |       100 |          20 |    525.00 |    500.00 |
+| P07868    | Keyboards     |          2.00 | Piece       |        10 |           3 |   3150.00 |   3050.00 |
+| P07885    | CD Drive      |          2.50 | Piece       |        10 |           3 |   5250.00 |   5100.00 |
+| P07965    | HDD           |          4.00 | Piece       |        10 |           3 |   8400.00 |   8000.00 |
+| P07975    | 1.44 Drive    |          5.00 | Piece       |        10 |           3 |   1050.00 |   1000.00 |
+| P08865    | 1.22 Drive    |          5.00 | Piece       |         2 |           3 |   1050.00 |   1000.00 |
++-----------+---------------+---------------+-------------+-----------+-------------+-----------+-----------+
+9 rows in set (0.10 sec)
+
+mysql> delimiter $$
+mysql> create function proprice(sellPrice double)RETURNS varchar(20)
+    -> DETERMINISTIC
+    -> BEGIN
+    -> DECLARE lvl varchar(20);
+    -> IF sellPrice<1000 THEN
+    -> SET lvl='CHEAP';
+    -> ELSEIF sellPrice>3000 THEN
+    -> SET lvl='EXPENSIVE';
+    -> END IF;
+    -> RETURN(lvl);
+    -> END;
+    -> $$
+Query OK, 0 rows affected (0.36 sec)
+
+mysql> select productNo , prodprice(sellPrice) from productmaster;
+    -> $$
++------------+-----------------------+
+| productNo | prodprice(sellPrice) |
++------------+-----------------------+
+| P00001     | CHEAP                 |
+| P03453     | EXPENSIVE             |
+| P06734     | NULL                  |
+| P07865     | CHEAP                 |
+| P07868     | EXPENSIVE             |
+| P07885     | EXPENSIVE             |
+| P07965     | EXPENSIVE             |
+| P07975     | NULL                  |
+| P08865     | NULL                  |
++------------+-----------------------+
+

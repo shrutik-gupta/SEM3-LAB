@@ -1,0 +1,348 @@
+﻿Assignment 6
+Aim: To implement simple queries and aggregate functions in mySQL.
+Theory:
+In database management an aggregate function is a function where the values of multiple rows are grouped together as input on certain criteria to form a single value of more significant meaning.
+
+Various Aggregate Functions-
+1) Count()
+2) Sum()
+3) Avg()
+4) Min()
+5) Max()
+
+Queries:
+Basic Queries
+Q.1 find the names of all the clients
+mysql> select name from clientMaster;
++-----------------+
+| name            |
++-----------------+
+| Ivan Bayross    |
+| Vandana Saitwal |
+| Pramada Jaguste |
+| Basu Navindgi   |
+| Ravi Sreedharan |
+| Rukmini         |
++-----------------+
+6 rows in set (0.00 sec)
+
+Q.2 print the entire client master table
+mysql> select * from clientMaster;
++----------+-----------------+------+------+--------+-------------+---------+----------+
+| clientNo | name            | add1 | add2 | city   | state       | pincode | balDue   |
++----------+-----------------+------+------+--------+-------------+---------+----------+
+| C00001   | Ivan Bayross    | NULL | NULL | Bombay | Maharashtra |  400054 | 15000.00 |
+| C00002   | Vandana Saitwal | NULL | NULL | Madras | Tamil Nadu  |  780001 |     0.00 |
+| C00003   | Pramada Jaguste | NULL | NULL | Bombay | Maharashtra |  400057 |  5000.00 |
+| C00004   | Basu Navindgi   | NULL | NULL | Bombay | Maharashtra |  400056 |     0.00 |
+| C00005   | Ravi Sreedharan | NULL | NULL | Delhi  |             |  100001 |  2000.00 |
+| C00006   | Rukmini         | NULL | NULL | Bombay | Maharashtra |  400050 | 15000.00 |
++----------+-----------------+------+------+--------+-------------+---------+----------+
+6 rows in set (0.00 sec)
+
+Q.3 retrieve the list of names and cities of all the clients
+mysql> select name, city from clientMaster;
++-----------------+--------+
+| name            | city   |
++-----------------+--------+
+| Ivan Bayross    | Bombay |
+| Vandana Saitwal | Madras |
+| Pramada Jaguste | Bombay |
+| Basu Navindgi   | Bombay |
+| Ravi Sreedharan | Delhi  |
+| Rukmini         | Bombay |
++-----------------+--------+
+6 rows in set (0.00 sec)
+
+Q.4 list the various products available from the product master
+mysql> select description from productMaster;
++---------------+
+| description   |
++---------------+
+| 1.44 Floppies |
+| Monitors      |
+| Mouse         |
+| 1.22 Floppies |
+| Keyboards     |
+| CD Drive      |
+| HDD           |
+| 1.44 Drive    |
+| 1.22 Drive    |
++---------------+
+9 rows in set (0.00 sec)
+
+
+Q.5 find out the names of all the clients having a as a second letter in their names
+mysql> select name from clientMaster
+    -> where name like '_a%';
++-----------------+
+| name            |
++-----------------+
+| Vandana Saitwal |
+| Basu Navindgi   |
+| Ravi Sreedharan |
++-----------------+
+3 rows in set (0.00 sec)
+
+Q.6 find out the client who stays in the city with second letter a
+mysql> select name, city from clientMaster
+    -> where city like '_a%';
++-----------------+--------+
+| name            | city   |
++-----------------+--------+
+| Vandana Saitwal | Madras |
++-----------------+--------+
+1 row in set (0.00 sec)
+
+Q.7 find the list of clients who stays in bombay or delhi or madras using logical or operator
+mysql> select name, city from clientMaster
+    -> where city= 'Bombay' | city= 'Madras' | city= 'Delhi';
++-----------------+--------+
+| name            | city   |
++-----------------+--------+
+| Ivan Bayross    | Bombay |
+| Vandana Saitwal | Madras |
+| Pramada Jaguste | Bombay |
+| Basu Navindgi   | Bombay |
+| Ravi Sreedharan | Delhi  |
+| Rukmini         | Bombay |
++-----------------+--------+
+6 rows in set, 31 warnings (0.03 sec)
+
+Q.8 find the list of clients who stays in bombay or delhi or madras using in operator
+mysql> select name, city from clientMaster
+    -> where city in('Bombay', 'Madras', 'Delhi');
++-----------------+--------+
+| name            | city   |
++-----------------+--------+
+| Ivan Bayross    | Bombay |
+| Vandana Saitwal | Madras |
+| Pramada Jaguste | Bombay |
+| Basu Navindgi   | Bombay |
+| Ravi Sreedharan | Delhi  |
+| Rukmini         | Bombay |
++-----------------+--------+
+6 rows in set (0.00 sec)
+
+Q.9 list all the clients located in bombay
+mysql> select name, city from clientMaster
+    -> where city='Bombay';
++-----------------+--------+
+| name            | city   |
++-----------------+--------+
+| Ivan Bayross    | Bombay |
+| Pramada Jaguste | Bombay |
+| Basu Navindgi   | Bombay |
+| Rukmini         | Bombay |
++-----------------+--------+
+4 rows in set (0.00 sec)
+
+Q.10 list the name of clients whose balance due are greater than 10000
+mysql> select name, balDue from clientMaster
+    -> where balDue>10000;
++--------------+----------+
+| name         | balDue   |
++--------------+----------+
+| Ivan Bayross | 15000.00 |
+| Rukmini      | 15000.00 |
++--------------+----------+
+2 rows in set (0.11 sec)
+
+Q.11 display the order info for client number C00001 , C00002
+mysql> select * from clientMaster
+    -> where clientNo= 'C00001' or clientNo= 'C00002';
++----------+-----------------+------+------+--------+-------------+---------+----------+
+| clientNo | name            | add1 | add2 | city   | state       | pincode | balDue   |
++----------+-----------------+------+------+--------+-------------+---------+----------+
+| C00001   | Ivan Bayross    | NULL | NULL | Bombay | Maharashtra |  400054 | 15000.00 |
+| C00002   | Vandana Saitwal | NULL | NULL | Madras | Tamil Nadu  |  780001 |     0.00 |
++----------+-----------------+------+------+--------+-------------+---------+----------+
+2 rows in set (0.04 sec)
+
+Q.12 find product with description as 1.44 drive and 1.22 drive
+mysql> select productNo, description from productMaster
+    -> where description = '1.44 Drive' or description = '1.22 Drive';
++-----------+-------------+
+| productNo | description |
++-----------+-------------+
+| P07975    | 1.44 Drive  |
+| P08865    | 1.22 Drive  |
++-----------+-------------+
+2 rows in set (0.00 sec)
+
+Q.13 find the product whose selling price is greater than 2000 and less than or equal to 5000
+mysql> select productNo, description, sellPrice from productMaster
+    -> where sellPrice between 2000 and 5000;
++-----------+-------------+-----------+
+| productNo | description | sellPrice |
++-----------+-------------+-----------+
+| P07868    | Keyboards   |   3150.00 |
++-----------+-------------+-----------+
+1 row in set (0.00 sec)
+
+Q.14 find the product whose sell price is more than 1500 and also find the new sell price as original price*15
+mysql> select productNo, description, (sellPrice*15) from productMaster
+    -> where sellPrice>1500;
++-----------+-------------+----------------+
+| productNo | description | (sellPrice*15) |
++-----------+-------------+----------------+
+| P03453    | Monitors    |      180000.00 |
+| P07868    | Keyboards   |       47250.00 |
+| P07885    | CD Drive    |       78750.00 |
+| P07965    | HDD         |      126000.00 |
++-----------+-------------+----------------+
+4 rows in set (0.11 sec)
+
+Q.15 rename the new in the above query as new_price
+mysql> select productNo, description, (sellPrice*15) as new_price from productMaster
+    ->  where sellPrice>1500;
++-----------+-------------+-----------+
+| productNo | description | new_price |
++-----------+-------------+-----------+
+| P03453    | Monitors    | 180000.00 |
+| P07868    | Keyboards   |  47250.00 |
+| P07885    | CD Drive    |  78750.00 |
+| P07965    | HDD         | 126000.00 |
++-----------+-------------+-----------+
+4 rows in set (0.00 sec) 
+
+Q.16 find the product whose cost price is less than 1500
+mysql> select productNo, description, costPrice from productMaster
+    ->  where costPrice<1500;
++-----------+---------------+-----------+
+| productNo | description   | costPrice |
++-----------+---------------+-----------+
+| P00001    | 1.44 Floppies |    500.00 |
+| P06734    | Mouse         |   1000.00 |
+| P07865    | 1.22 Floppies |    500.00 |
+| P07975    | 1.44 Drive    |   1000.00 |
+| P08865    | 1.22 Drive    |   1000.00 |
++-----------+---------------+-----------+
+5 rows in set (0.00 sec)
+
+Q.17 list the products in sorted order of their description
+mysql> select productNo, description from productMaster
+    -> order by description asc;
++-----------+---------------+
+| productNo | description   |
++-----------+---------------+
+| P08865    | 1.22 Drive    |
+| P07865    | 1.22 Floppies |
+| P07975    | 1.44 Drive    |
+| P00001    | 1.44 Floppies |
+| P07885    | CD Drive      |
+| P07965    | HDD           |
+| P07868    | Keyboards     |
+| P03453    | Monitors      |
+| P06734    | Mouse         |
++-----------+---------------+
+9 rows in set (0.00 sec)
+
+Q.18 calculate the square root of price of each product
+mysql> select productNo, description, sellPrice, SQRT(sellPrice) from productMaster;
++-----------+---------------+-----------+--------------------+
+| productNo | description   | sellPrice | SQRT(sellPrice)    |
++-----------+---------------+-----------+--------------------+
+| P00001    | 1.44 Floppies |    525.00 |   22.9128784747792 |
+| P03453    | Monitors      |  12000.00 | 109.54451150103323 |
+| P06734    | Mouse         |   1050.00 |   32.4037034920393 |
+| P07865    | 1.22 Floppies |    525.00 |   22.9128784747792 |
+| P07868    | Keyboards     |   3150.00 | 56.124860801609124 |
+| P07885    | CD Drive      |   5250.00 |   72.4568837309472 |
+| P07965    | HDD           |   8400.00 |   91.6515138991168 |
+| P07975    | 1.44 Drive    |   1050.00 |   32.4037034920393 |
+| P08865    | 1.22 Drive    |   1050.00 |   32.4037034920393 |
++-----------+---------------+-----------+--------------------+
+9 rows in set (0.02 sec)
+
+Q.19 divide the cost of product 'HDD' by difference between its price and 100
+
+Q.20 list the names, city, state of clients not in state 'Maharashtra'
+mysql> select name, city, state from clientMaster
+    -> where state not in('Maharashtra');
++-----------------+--------+------------+
+| name            | city   | state      |
++-----------------+--------+------------+
+| Vandana Saitwal | Madras | Tamil Nadu |
+| Ravi Sreedharan | Delhi  |            |
++-----------------+--------+------------+
+2 rows in set (0.09 sec)
+
+Q.21 list the product no., description, sellprice of products whose description starts with 'M'
+mysql> select productNo, description, sellPrice from productMaster
+    -> where description like 'M%';
++-----------+-------------+-----------+
+| productNo | description | sellPrice |
++-----------+-------------+-----------+
+| P03453    | Monitors    |  12000.00 |
+| P06734    | Mouse       |   1050.00 |
++-----------+-------------+-----------+
+2 rows in set (0.01 sec)
+
+Aggregate Functions
+Q.1 count the total number of orders
+mysql> select count(productNo) from productMaster;
++------------------+
+| count(productNo) |
++------------------+
+|                9 |
++------------------+
+1 row in set (1.00 sec)
+
+Q.2 calculate the average price of all the products
+mysql> select avg(sellPrice) from productMaster;
++----------------+
+| avg(sellPrice) |
++----------------+
+|    3666.666667 |
++----------------+
+1 row in set (0.04 sec)
+
+Q.3 calculate the minimum price of product
+mysql> select min(sellPrice) from productMaster;
++----------------+
+| min(sellPrice) |
++----------------+
+|         525.00 |
++----------------+
+1 row in set (0.02 sec)
+
+Q.4 determine the maximum and minimum product price. rename the title as max_price and min_price respectively
+mysql> select max(sellPrice) as max_price, min(sellPrice) as min_price from productMaster;
++-----------+-----------+
+| max_price | min_price |
++-----------+-----------+
+|  12000.00 |    525.00 |
++-----------+-----------+
+1 row in set (0.03 sec)
+
+Q.5 count the no. of products having price >= 1500
+mysql> select count(productNo) from productMaster
+    -> where (sellPrice>=1500);
++------------------+
+| count(productNo) |
++------------------+
+|                4 |
++------------------+
+1 row in set (0.02 sec)
+
+Q.6 find all products whose qty on hand is less than reorder level
+mysql>  select productNo, description from productMaster
+    -> where (qtyOnHand<recorderLvl);
++-----------+-------------+
+| productNo | description |
++-----------+-------------+
+| P08865    | 1.22 Drive  |
++-----------+-------------+
+1 row in set (0.00 sec)
+
+Q.7 count the no. of products whose qty on hand is less than reorder level
+mysql>  select  count(productNo) from productMaster
+    ->  where (qtyOnHand<recorderLvl);
++------------------+
+| count(productNo) |
++------------------+
+|                1 |
++------------------+
+1 row in set (0.01 sec)
+

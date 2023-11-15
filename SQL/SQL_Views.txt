@@ -1,0 +1,125 @@
+﻿Assignment 8
+Aim: To implement views in mySQL.
+Theory:
+In SQL, a view is a virtual table based on the result-set of an SQL statement.A view contains rows and columns, just like a real table. The fields in a view are fields from one or more real tables in the database.
+You can add SQL statements and functions to a view and present the data as if the data were coming from one single table.
+A view is created with the CREATE VIEW statement. 
+
+CREATE VIEW Syntax
+CREATE VIEW view_name AS
+SELECT column1, column2, ...
+FROM table_name
+WHERE condition;
+
+Queries:
+mysql> select * from clientmaster;
++----------+-----------------+------+------+--------+-------------+---------+----------+
+| clientNo | name            | add1 | add2 | city   | state       | pincode | balDue   |
++----------+-----------------+------+------+--------+-------------+---------+----------+
+| C00001   | Ivan Bayross    | NULL | NULL | Bombay | Maharashtra |  400054 | 15000.00 |
+| C00002   | Vandana Saitwal | NULL | NULL | Madras | Tamil Nadu  |  780001 |     0.00 |
+| C00003   | Pramada Jaguste | NULL | NULL | Bombay | Maharashtra |  400057 |  5000.00 |
+| C00004   | Basu Navindgi   | NULL | NULL | Bombay | Maharashtra |  400056 |     0.00 |
+| C00005   | Ravi Sreedharan | NULL | NULL | Delhi  |             |  100001 |  2000.00 |
+| C00006   | Rukmini         | NULL | NULL | Bombay | Maharashtra |  400050 | 15000.00 |
++----------+-----------------+------+------+--------+-------------+---------+----------+
+6 rows in set (0.00 sec)
+
+mysql> select * from productmaster;
++-----------+---------------+---------------+-------------+-----------+-------------+-----------+-----------+
+| productNo | description   | profitPercent | unitMeasure | qtyOnHand | recorderLvl | sellPrice | costPrice |
++-----------+---------------+---------------+-------------+-----------+-------------+-----------+-----------+
+| P00001    | 1.44 Floppies |          5.00 | Piece       |       100 |          20 |    525.00 |    500.00 |
+| P03453    | Monitors      |          6.00 | Piece       |        10 |           3 |  12000.00 |  11280.00 |
+| P06734    | Mouse         |          5.00 | Piece       |        20 |           5 |   1050.00 |   1000.00 |
+| P07865    | 1.22 Floppies |          5.00 | Piece       |       100 |          20 |    525.00 |    500.00 |
+| P07868    | Keyboards     |          2.00 | Piece       |        10 |           3 |   3150.00 |   3050.00 |
+| P07885    | CD Drive      |          2.50 | Piece       |        10 |           3 |   5250.00 |   5100.00 |
+| P07965    | HDD           |          4.00 | Piece       |        10 |           3 |   8400.00 |   8000.00 |
+| P07975    | 1.44 Drive    |          5.00 | Piece       |        10 |           3 |   1050.00 |   1000.00 |
+| P08865    | 1.22 Drive    |          5.00 | Piece       |         2 |           3 |   1050.00 |   1000.00 |
++-----------+---------------+---------------+-------------+-----------+-------------+-----------+-----------+
+9 rows in set (0.00 sec)
+
+mysql> create view v1 as
+    -> select clientNo, name, balDue from clientmaster;
+Query OK, 0 rows affected (0.17 sec)
+
+mysql> select * from v1;
++----------+-----------------+----------+
+| clientNo | name            | balDue   |
++----------+-----------------+----------+
+| C00001   | Ivan Bayross    | 15000.00 |
+| C00002   | Vandana Saitwal |     0.00 |
+| C00003   | Pramada Jaguste |  5000.00 |
+| C00004   | Basu Navindgi   |     0.00 |
+| C00005   | Ravi Sreedharan |  2000.00 |
+| C00006   | Rukmini         | 15000.00 |
++----------+-----------------+----------+
+6 rows in set (0.00 sec)
+
+mysql> create view v2 as
+    -> select c.clientNo, c.name, p.productNo, p.description
+    -> from clientmaster c, productmaster p;
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> select * from v2;
++----------+-----------------+-----------+---------------+
+| clientNo | name            | productNo | description   |
++----------+-----------------+-----------+---------------+
+| C00006   | Rukmini         | P00001    | 1.44 Floppies |
+| C00005   | Ravi Sreedharan | P00001    | 1.44 Floppies |
+| C00004   | Basu Navindgi   | P00001    | 1.44 Floppies |
+| C00003   | Pramada Jaguste | P00001    | 1.44 Floppies |
+| C00002   | Vandana Saitwal | P00001    | 1.44 Floppies |
+| C00001   | Ivan Bayross    | P00001    | 1.44 Floppies |
+| C00006   | Rukmini         | P03453    | Monitors      |
+| C00005   | Ravi Sreedharan | P03453    | Monitors      |
+| C00004   | Basu Navindgi   | P03453    | Monitors      |
+| C00003   | Pramada Jaguste | P03453    | Monitors      |
+| C00002   | Vandana Saitwal | P03453    | Monitors      |
+| C00001   | Ivan Bayross    | P03453    | Monitors      |
+| C00006   | Rukmini         | P06734    | Mouse         |
+| C00005   | Ravi Sreedharan | P06734    | Mouse         |
+| C00004   | Basu Navindgi   | P06734    | Mouse         |
+| C00003   | Pramada Jaguste | P06734    | Mouse         |
+| C00002   | Vandana Saitwal | P06734    | Mouse         |
+| C00001   | Ivan Bayross    | P06734    | Mouse         |
+| C00006   | Rukmini         | P07865    | 1.22 Floppies |
+| C00005   | Ravi Sreedharan | P07865    | 1.22 Floppies |
+| C00004   | Basu Navindgi   | P07865    | 1.22 Floppies |
+| C00003   | Pramada Jaguste | P07865    | 1.22 Floppies |
+| C00002   | Vandana Saitwal | P07865    | 1.22 Floppies |
+| C00001   | Ivan Bayross    | P07865    | 1.22 Floppies |
+| C00006   | Rukmini         | P07868    | Keyboards     |
+| C00005   | Ravi Sreedharan | P07868    | Keyboards     |
+| C00004   | Basu Navindgi   | P07868    | Keyboards     |
+| C00003   | Pramada Jaguste | P07868    | Keyboards     |
+| C00002   | Vandana Saitwal | P07868    | Keyboards     |
+| C00001   | Ivan Bayross    | P07868    | Keyboards     |
+| C00006   | Rukmini         | P07885    | CD Drive      |
+| C00005   | Ravi Sreedharan | P07885    | CD Drive      |
+| C00004   | Basu Navindgi   | P07885    | CD Drive      |
+| C00003   | Pramada Jaguste | P07885    | CD Drive      |
+| C00002   | Vandana Saitwal | P07885    | CD Drive      |
+| C00001   | Ivan Bayross    | P07885    | CD Drive      |
+| C00006   | Rukmini         | P07965    | HDD           |
+| C00005   | Ravi Sreedharan | P07965    | HDD           |
+| C00004   | Basu Navindgi   | P07965    | HDD           |
+| C00003   | Pramada Jaguste | P07965    | HDD           |
+| C00002   | Vandana Saitwal | P07965    | HDD           |
+| C00001   | Ivan Bayross    | P07965    | HDD           |
+| C00006   | Rukmini         | P07975    | 1.44 Drive    |
+| C00005   | Ravi Sreedharan | P07975    | 1.44 Drive    |
+| C00004   | Basu Navindgi   | P07975    | 1.44 Drive    |
+| C00003   | Pramada Jaguste | P07975    | 1.44 Drive    |
+| C00002   | Vandana Saitwal | P07975    | 1.44 Drive    |
+| C00001   | Ivan Bayross    | P07975    | 1.44 Drive    |
+| C00006   | Rukmini         | P08865    | 1.22 Drive    |
+| C00005   | Ravi Sreedharan | P08865    | 1.22 Drive    |
+| C00004   | Basu Navindgi   | P08865    | 1.22 Drive    |
+| C00003   | Pramada Jaguste | P08865    | 1.22 Drive    |
+| C00002   | Vandana Saitwal | P08865    | 1.22 Drive    |
+| C00001   | Ivan Bayross    | P08865    | 1.22 Drive    |
++----------+-----------------+-----------+---------------+
+54 rows in set (0.00 sec)

@@ -1,0 +1,133 @@
+﻿Assignment 9
+Aim: To implement triggers in mySQL.
+Theory:
+A trigger is a stored procedure in a database that automatically invokes whenever a special event in the database occurs. For example, a trigger can be invoked when a row is inserted into a specified table or when specific table columns are updated in simple words a trigger is a collection of SQL statements with particular names that are stored in system memory. It belongs to a specific class of stored procedures that are automatically invoked in response to database server events. Every trigger has a table attached to it.
+
+create trigger [trigger_name] 
+[before | after]  
+{insert | update | delete}  
+on [table_name]  
+[for each row]  
+[trigger_body]
+
+Queries:
+mysql> use shrutik;
+Database changed
+
+mysql> show tables;
++-------------------+
+| Tables_in_shrutik |
++-------------------+
+| clientmaster      |
+| productmaster     |
+| student           |
++-------------------+
+3 rows in set (0.18 sec)
+
+mysql> create table Student
+    -> (
+    -> roll_no int(2) not null,
+    -> name varchar(20) not null,
+    -> city varchar(15) not null,
+    -> state varchar(20) not null
+    -> );
+Query OK, 0 rows affected, 1 warning (0.02 sec)
+
+mysql> select * from student;
++--------+---------+--------+-------------+
+| rollNo | name    | city   | state       |
++--------+---------+--------+-------------+
+|     43 | shrutik | mumbai | maharashtra |
++--------+---------+--------+-------------+
+1 row in set (0.32 sec)
+
+mysql> delimiter $$
+mysql> create trigger tg1
+    ->  before insert on Student
+    -> for each row
+    -> begin
+    -> set new.name= upper(new.name);
+    -> set new.city= upper(new.city);
+    -> end;
+    -> $$
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> insert into student values (28, 'Shania', 'mumbai', 'Maharashtra');
+Query OK, 1 row affected (0.08 sec)
+
+mysql> select * from student;
++--------+---------+--------+-------------+
+| rollNo | name    | city   | state       |
++--------+---------+--------+-------------+
+|     43 | shrutik | mumbai | maharashtra |
+|     28 | SHANIA  | MUMBAI | Maharashtra |
++--------+---------+--------+-------------+
+2 rows in set (0.00 sec)
+
+mysql> create table person(
+    -> fname char(10),
+    -> lname char(10),
+    -> id decimal(8) primary key);
+Query OK, 0 rows affected (0.31 sec)
+
+mysql> insert into person values ('leena','kirtikar',43);
+Query OK, 1 row affected (0.07 sec)
+
+mysql> insert into person values ('aakash','kapadia',38);
+Query OK, 1 row affected (0.10 sec)
+
+mysql> insert into person values ('parth','shroff',63);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> select * from person;
++--------+----------+----+
+| fname  | lname    | id |
++--------+----------+----+
+| aakash | kapadia  | 38 |
+| leena  | kirtikar | 43 |
+| parth  | shroff   | 63 |
++--------+----------+----+
+3 rows in set (0.00 sec)
+
+mysql>create table audit_log(
+    ->ofname char(10),
+    ->olname char(10),
+    ->nfname char(10),
+    ->nname char(10),
+    ->cwhen date);
+
+mysql> delimiter $$
+mysql> create trigger t2
+    -> after update on person
+    -> for each row
+    -> begin
+    -> insert into audit_log values
+    -> (old.fname,old.lname,new.fname,new.lname,curdate());
+    -> end;
+    -> $$
+
+mysql> update person set fname='anish' where id like 43;
+    -> $$
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> update person set fname='anvay' where id like 63;
+    -> $$
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> update person set fname='aman' where id like 38;
+    -> $$
+Query OK, 1 row affected (0.14 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from audit_log;
+    -> $$
++--------+----------+--------+----------+------------+
+| ofname | olname   | nfname | nname    | cwhen      |
++--------+----------+--------+----------+------------+
+| leena  | kirtikar | anish  | kirtikar | 2023-10-21 |
+| parth  | shroff   | anvay  | shroff   | 2023-10-21 |
+| aakash | kapadia  | aman   | kapadia  | 2023-10-21 |
++--------+----------+--------+----------+------------+
+3 rows in set (0.00 sec)

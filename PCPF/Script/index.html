@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<htmllang="en">
+    <head>
+        <meta charset= "UTF-8">
+        <meta name= "viewport" content="width=device-width, initial-scale=1.0">
+        <title>Form Validation</title>
+    </head>
+        
+    <body>
+        <form onsubmit="validate()">
+            <input id="uname" placeholder="Username" type="text" />
+            <br><br>
+            <input id="pass" placeholder="Password" type="password" />
+            <br><br>
+            <button type="submit">Submit</button>
+        </form>
+        <script type="text/javascript">
+            function validate()
+            {
+                var username= document.getElementById("uname").value;
+                var password=document.getElementById("pass").value;
+                var usernameRegex=/[A-Z]/;
+                var passwordRegex=/^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,12}$/;
+                if(usernameRegex.test(username) && passwordRegex.test(password))
+                {
+                    alert("Credentials are valid!");
+                } 
+                else
+                {
+                    alert("Invalid credentials. Please check the requirements.");
+                }
+            }
+        </script>
+    </body>
+</html>
+
