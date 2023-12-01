@@ -13,7 +13,7 @@ Explore a treasure trove of hands-on coding experiences tailored for your third 
 
 1. DS: Contains code snippets and solutions for DSA course.
 2. JPL: Contains code snippets and solutions for Java course.
-3. CPPL: Contains code snippets and solutions for PCPF course.
+3. PCPF: Contains code snippets and solutions for PCPF course.
 4. SQL: Contains code snippets and solutions for DBMS Course.
 
 🌟 Happy Coding!
